@@ -6,13 +6,41 @@
     <title>네르 강림: 사운드 싱크 버전</title>
     <style>
         body {
-            background-color: #000;
+            background: radial-gradient(circle at center, #1a0a2e 0%, #050505 100%);
+            perspective: 1000px; /* 3D 효과용 */
             margin: 0; padding: 0;
             width: 100vw; height: 100vh;
             overflow: hidden;
             font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
             -webkit-tap-highlight-color: transparent;
-        }
+        }/* 2. 움직이는 그리드/노이즈 패턴 레이어 */
+.bg-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    z-index: -1;
+    pointer-events: none;
+    transition: transform 0.1s ease-out;
+}/* 3. 네르 강림 시 화면 흔들림 효과 */
+@keyframes screen-shake {
+    0% { transform: translate(0,0); filter: invert(0); }
+    10% { transform: translate(-10px, 10px); filter: invert(0.5); }
+    20% { transform: translate(10px, -10px); }
+    30% { transform: translate(-10px, -10px); filter: invert(1); }
+    40% { transform: translate(10px, 10px); }
+    50% { transform: translate(0,0); filter: invert(0); }
+}
+
+.shake {
+    animation: screen-shake 0.3s infinite;
+}
+
+/* 4. 클릭 중 배경 밝기 변화 */
+body.clicking {
+    background: radial-gradient(circle at center, #2e0a1a 0%, #050505 100%);
+}
         .speaky-wrapper {
             position: absolute;
             display: flex;
@@ -23,9 +51,19 @@
             animation: rgb-glow 0.4s infinite linear, speaky-flip var(--flip-dur, 0.3s) infinite alternate var(--flip-delay, 0s);
             transition: top var(--move-dur, 1s) linear, left var(--move-dur, 1s) linear;
             will-change: left, top, transform;
-            transform: translateZ(0);
+            transition: top var(--move-dur, 1s) var(--ease), left var(--move-dur, 1s) var(--ease), transform 0.2s ease-out;
             /* 처음에는 숨겨두었다가 시작 시 표시하고 싶다면 opacity: 0; 처리 가능 */
         }
+        @keyframes jitter {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(-2px, 2px) rotate(-1deg); }
+    50% { transform: translate(2px, -2px) rotate(1deg); }
+    75% { transform: translate(-2px, -2px) rotate(-1deg); }
+    100% { transform: translate(2px, 2px) rotate(1deg); }
+}
+.speaky-wrapper.excited {
+    animation: rgb-glow 0.4s infinite linear, speaky-flip var(--flip-dur, 0.3s) infinite alternate, jitter 0.05s infinite;
+}
         @keyframes speaky-flip { 0% { transform: scaleX(1); } 100% { transform: scaleX(-1); } }
         .bubble {
             background: white; border: 3px solid #fff; border-radius: 12px;
@@ -87,7 +125,7 @@
     </style>
 </head>
 <body>
-
+<div class="bg-overlay" id="bgOverlay"></div>
     <div id="start-overlay">화면을 터치하여 강림 시작<br>(사운드 포함 버전)</div>
 
     <div class="nere-container" id="nereContainer">
@@ -95,6 +133,123 @@
         <img id="nereImg" src="nere.png" class="nere-img">
     </div>
 
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
+    <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
     <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
     <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
     <div class="speaky-wrapper"><div class="bubble">스피키 네르지마세요!</div><img src="speaky.png" class="speaky-img"></div>
@@ -113,6 +268,36 @@
     let activeSpeakyAudios = []; 
     let isNereTime = false;
     let isStarted = false;
+
+    // 마우스/터치 좌표를 저장할 변수 (초기값은 화면 중앙)
+let mouseX = window.innerWidth / 2;
+let mouseY = window.innerHeight / 2;
+
+// 좌표 및 클릭 상태 감지
+window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+window.addEventListener('mousedown', (e) => {
+    if (e.button === 0) { // 좌클릭 확인
+        isClicking = true;
+        if (!isStarted) initAudio();
+    }
+});
+window.addEventListener('mouseup', () => isClicking = false);
+
+// 터치 대응
+window.addEventListener('touchstart', (e) => {
+    isClicking = true;
+    mouseX = e.touches[0].clientX;
+    mouseY = e.touches[0].clientY;
+    if (!isStarted) initAudio();
+});
+window.addEventListener('touchend', () => isClicking = false);
+window.addEventListener('touchmove', (e) => {
+    mouseX = e.touches[0].clientX;
+    mouseY = e.touches[0].clientY;
+}, { passive: true });
 
     function initAudio() {
         if (isStarted) return;
@@ -162,46 +347,73 @@
             setTimeout(() => {
                 isNereTime = false;
                 activeSpeakyAudios.forEach(a => a.volume = 1.0);
-            }, 1500);
+            }, 500);
         };
 
         // 터치 즉시 첫 실행 후 5초 간격 반복
         triggerNere();
-        setInterval(triggerNere, 5000);
+        setInterval(triggerNere, 1000);
     }
 
-    function startSpeakyMovement() {
-        const speakies = document.querySelectorAll('.speaky-wrapper');
-        speakies.forEach((speaky) => {
-            const flipDur = (Math.random() * 0.15 + 0.3).toFixed(2) + 's';
-            const flipDelay = (Math.random() * 0.8).toFixed(2) + 's';
-            speaky.style.setProperty('--flip-dur', flipDur);
-            speaky.style.setProperty('--flip-delay', flipDelay);
+function startSpeakyMovement() {
+    const speakies = document.querySelectorAll('.speaky-wrapper');
+    
+    // 타이밍 함수 목록 (다양한 움직임 리듬)
+    const easings = [
+        'cubic-bezier(0.34, 1.56, 0.64, 1)', // 초과해서 튀어오름
+        'cubic-bezier(0.18, 0.89, 0.32, 1.28)', // 쫀득한 느낌
+        'ease-in-out',
+        'linear'
+    ];
 
-            const moveRandomly = (isFirst = false) => {
-                const maxX = window.innerWidth - 120;
-                const maxY = window.innerHeight - 150;
-                const randomX = Math.random() * maxX;
-                const randomY = Math.random() * maxY;
-                const moveSpeed = Math.random() * 1000 + 500; 
+    speakies.forEach((speaky) => {
+        const flipDur = (Math.random() * 0.15 + 0.1).toFixed(1) + 's';
+        speaky.style.setProperty('--flip-dur', flipDur);
 
-                if (isFirst) {
-                    speaky.style.transition = 'none';
-                    speaky.style.left = randomX + 'px';
-                    speaky.style.top = randomY + 'px';
-                    speaky.offsetHeight; 
-                    speaky.style.transition = `top ${moveSpeed}ms linear, left ${moveSpeed}ms linear`;
-                    setTimeout(() => moveRandomly(), 10);
-                } else {
-                    speaky.style.setProperty('--move-dur', moveSpeed + 'ms');
-                    speaky.style.left = randomX + 'px';
-                    speaky.style.top = randomY + 'px';
-                    setTimeout(moveRandomly, moveSpeed);
-                }
-            };
-            moveRandomly(true);
-        });
-    }
+        const moveLogic = () => {
+            let targetX, targetY, moveSpeed, easing, rotation, scale;
+
+            if (isClicking) {
+                // [클릭 중] 커서로 집결 (흥분 상태)
+                speaky.classList.add('excited');
+                const range = 180;
+                targetX = mouseX + (Math.random() * range - range / 2) - 60;
+                targetY = mouseY + (Math.random() * range - range / 2) - 75;
+                moveSpeed = Math.random() * 300 + 200;
+                easing = easings[0]; // 튀어오르는 느낌
+                
+                // 마우스를 향해 몸을 기울임
+                rotation = (targetX > mouseX) ? 15 : -15;
+                scale = "scale(1.2)"; // 커짐
+            } else {
+                // [방황 중] 자유로운 이동
+                speaky.classList.remove('excited');
+                targetX = Math.random() * (window.innerWidth - 120);
+                targetY = Math.random() * (window.innerHeight - 150);
+                moveSpeed = Math.random() * 2000 + 1000;
+                easing = easings[Math.floor(Math.random() * easings.length)];
+                
+                // 무작위 회전 및 기본 크기
+                rotation = Math.random() * 40 - 20;
+                scale = "scale(1)";
+            }
+
+            // 속성에 따른 동적 변화 적용
+            speaky.style.setProperty('--move-dur', moveSpeed + 'ms');
+            speaky.style.setProperty('--ease', easing);
+            speaky.style.left = targetX + 'px';
+            speaky.style.top = targetY + 'px';
+            
+            // 이동 방향과 상태에 따른 Transform 적용 (flip 애니메이션과 겹치지 않게 주의)
+            // 여기서는 wrapper 자체에 transform을 섞어 씁니다.
+            const flip = Math.sin(Date.now() / 200) > 0 ? 1 : -1;
+            speaky.style.transform = `${scale} rotate(${rotation}deg)`;
+
+            setTimeout(moveLogic, moveSpeed * 0.8);
+        };
+        moveLogic();
+    });
+}
 
     window.addEventListener('click', initAudio);
     window.addEventListener('touchstart', initAudio);
