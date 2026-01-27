@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>스피키 네르지 마세요!</title>
+    <title>스피키 머리 네르지 마세요!</title>
     <style>
 body { 
         margin: 0; 
@@ -118,7 +118,6 @@ canvas.addEventListener('mousedown', (e) => {
 
     lastInteractionTime = Date.now(); 
 });
-
 window.addEventListener('mouseup', () => {
     if (isMouseDown) {
         // 추가: 뗄 때 소리 재생 및 시간 리셋
@@ -128,6 +127,60 @@ window.addEventListener('mouseup', () => {
     isMouseDown = false;
     lastInteractionTime = Date.now();
 });
+// --- 터치 이벤트 지원 추가 ---
+
+// 1. 터치 시작 (mousedown 대응)
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault(); // 스크롤 방지
+    isMouseDown = true;
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    
+    // 마우스 좌표 변수(mouse.x, mouse.y) 업데이트
+    mouse.x = touch.clientX - rect.left;
+    mouse.y = touch.clientY - rect.top;
+    targetX = mouse.x; // 기존 코드의 targetX 변수 대응
+
+    // 당기기 기능을 위한 정점 찾기
+    if (typeof getNearestPoint === 'function') {
+        grabbedPoint = getNearestPoint(mouse.x, mouse.y);
+    }
+
+    stopAllSounds();
+    soundDown.play();
+    lastInteractionTime = Date.now();
+}, { passive: false });
+
+// 2. 터치 이동 (mousemove 대응)
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (!isMouseDown) return;
+    
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = touch.clientX - rect.left;
+    mouse.y = touch.clientY - rect.top;
+    targetX = mouse.x;
+
+    // 잡고 있는 점이 있다면 위치 업데이트
+    if (grabbedPoint) {
+        grabbedPoint.x = mouse.x;
+        grabbedPoint.y = mouse.y;
+    }
+}, { passive: false });
+
+// 3. 터치 종료 (mouseup 대응)
+window.addEventListener('touchend', (e) => {
+    if (isMouseDown) {
+        stopAllSounds();
+        soundUp.play();
+    }
+    isMouseDown = false;
+    grabbedPoint = null;
+    lastInteractionTime = Date.now();
+}, { passive: false });
+
+
     function initMesh() {
         mesh = [];
         originalMesh = [];
@@ -280,6 +333,4 @@ function drawTriangle(x, y, reverse) {
 
 </script>
 </body>
-
 </html>
-
