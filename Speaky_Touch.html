@@ -110,9 +110,10 @@ canvas {
     });
 canvas.addEventListener('mousedown', (e) => {
     isMouseDown = true;
+
+    canvas.classList.remove('shake-canvas');
+
     updateMouse(e);
-    
-    // 추가: 누를 때 소리 재생 및 시간 리셋
     stopAllSounds(); // 다른 모든 소리 즉시 중단
     soundDown.play();
 
@@ -134,6 +135,8 @@ canvas.addEventListener('touchstart', (e) => {
     e.preventDefault(); // 브라우저 기본 스크롤/확대 방지
     isMouseDown = true;
     
+    canvas.classList.remove('shake-canvas');
+
     const touch = e.touches[0]; // 첫 번째 손가락 터치 정보
     const rect = canvas.getBoundingClientRect();
     
