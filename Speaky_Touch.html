@@ -131,23 +131,18 @@ window.addEventListener('mouseup', () => {
 
 // 1. 터치 시작 (mousedown 대응)
 canvas.addEventListener('touchstart', (e) => {
-    e.preventDefault(); // 스크롤 방지
+    e.preventDefault(); // 브라우저 기본 스크롤/확대 방지
     isMouseDown = true;
-    const touch = e.touches[0];
+    
+    const touch = e.touches[0]; // 첫 번째 손가락 터치 정보
     const rect = canvas.getBoundingClientRect();
     
-    // 마우스 좌표 변수(mouse.x, mouse.y) 업데이트
-    mouse.x = touch.clientX - rect.left;
-    mouse.y = touch.clientY - rect.top;
-    targetX = mouse.x; // 기존 코드의 targetX 변수 대응
+    // 기존 로직에서 사용하는 targetX 변수에 터치 좌표 대입
+    targetX = touch.clientX - rect.left;
 
-    // 당기기 기능을 위한 정점 찾기
-    if (typeof getNearestPoint === 'function') {
-        grabbedPoint = getNearestPoint(mouse.x, mouse.y);
-    }
-
+    // 소리 재생 및 상태 업데이트
     stopAllSounds();
-    soundDown.play();
+    soundDown.play().catch(e => console.log("오디오 재생 실패: ", e));
     lastInteractionTime = Date.now();
 }, { passive: false });
 
@@ -158,25 +153,19 @@ canvas.addEventListener('touchmove', (e) => {
     
     const touch = e.touches[0];
     const rect = canvas.getBoundingClientRect();
-    mouse.x = touch.clientX - rect.left;
-    mouse.y = touch.clientY - rect.top;
-    targetX = mouse.x;
-
-    // 잡고 있는 점이 있다면 위치 업데이트
-    if (grabbedPoint) {
-        grabbedPoint.x = mouse.x;
-        grabbedPoint.y = mouse.y;
-    }
+    
+    // 이동하는 손가락의 X좌표를 실시간으로 업데이트
+    targetX = touch.clientX - rect.left;
 }, { passive: false });
 
 // 3. 터치 종료 (mouseup 대응)
 window.addEventListener('touchend', (e) => {
+    // touchend에서는 e.touches가 비어있을 수 있으므로 isMouseDown 상태로 판단
     if (isMouseDown) {
         stopAllSounds();
-        soundUp.play();
+        soundUp.play().catch(e => console.log("오디오 재생 실패: ", e));
     }
     isMouseDown = false;
-    grabbedPoint = null;
     lastInteractionTime = Date.now();
 }, { passive: false });
 
