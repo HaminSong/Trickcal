@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>스피키 네르지 마세요!</title>
     <style>
         body { 
@@ -9,6 +10,8 @@
             background-color: #121212; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             height: 100vh; overflow: hidden; font-family: sans-serif;
+            /* 모바일 스크롤/새로고침 방지 */
+            touch-action: none;
         }
         #game-container {
             position: relative;
@@ -83,30 +86,43 @@
 
     let currentSpeakyImg = new Image();
     let isHappy = false;
-
     const rows = 40; const cols = 40;
     let mesh = [];
     let originalMesh = [];
-    
     let isMouseDown = false;
     let isDraggingPumkin = false;
     let targetX = 0;
     let fixedY = 20;
     let lastInteractionTime = Date.now();
-    let shakeTimer = null; // 흔들림을 멈추기 위한 타이머 참조
+    let shakeTimer = null;
 
     let pPos = { x: 0, y: 0, originX: 0, originY: 0 };
+
+    // 좌표 추출 헬퍼 함수
+    function getEventPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        let clientX, clientY;
+        if (e.touches && e.touches.length > 0) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+        return {
+            x: clientX - rect.left,
+            y: clientY - rect.top
+        };
+    }
 
     window.onload = function() {
         currentSpeakyImg.src = imgSpeakyCrying;
         currentSpeakyImg.onload = function() {
             canvas.width = currentSpeakyImg.width + 200;
             canvas.height = currentSpeakyImg.height;
-            
             pPos.originX = currentSpeakyImg.width + 100;
             pPos.originY = canvas.height / 1.5;
             updatePumkinStyle(pPos.originX, pPos.originY);
-
             initMesh();
         };
     };
@@ -132,10 +148,12 @@
     }
 
     const startScreen = document.getElementById('start-screen');
-    startScreen.addEventListener('click', () => {
+    const handleStart = () => {
         startScreen.style.display = 'none';
         animate();
-    });
+    };
+    startScreen.addEventListener('click', handleStart);
+    startScreen.addEventListener('touchstart', handleStart);
 
     function stopAllSounds() {
         [soundDown, soundUp, soundIdle, soundHappy].forEach(s => { s.pause(); s.currentTime = 0; });
@@ -151,29 +169,37 @@
         }
     }
 
-    pumkinEl.addEventListener('mousedown', (e) => {
-        isDraggingPumkin = true;
-        pumkinEl.style.cursor = 'grabbing';
-        lastInteractionTime = Date.now();
-    });
-
-    window.addEventListener('mousemove', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const mx = e.clientX - rect.left;
-        const my = e.clientY - rect.top;
-
-        if (isDraggingPumkin) {
-            updatePumkinStyle(mx - 40, my - 40);
+    // --- 인터랙션 로직 통합 ---
+    const onDown = (e) => {
+        const pos = getEventPos(e);
+        if (e.target === pumkinEl) {
+            isDraggingPumkin = true;
+            pumkinEl.style.cursor = 'grabbing';
+        } else if (pos.x <= currentSpeakyImg.width) {
+            if (isHappy) {
+                isHappy = false;
+                currentSpeakyImg.src = imgSpeakyCrying;
+            }
+            isMouseDown = true;
+            stopShake();
+            stopAllSounds();
+            soundDown.play();
         }
-        targetX = mx;
-    });
+        lastInteractionTime = Date.now();
+    };
 
-    window.addEventListener('mouseup', () => {
+    const onMove = (e) => {
+        const pos = getEventPos(e);
+        if (isDraggingPumkin) {
+            updatePumkinStyle(pos.x - 40, pos.y - 40);
+        }
+        targetX = pos.x;
+    };
+
+    const onUp = () => {
         if (isDraggingPumkin) {
             if (pPos.x < currentSpeakyImg.width) {
-                // 해피 상태로 전환 시 흔들림 즉시 중단
                 stopShake(); 
-                
                 isHappy = true;
                 currentSpeakyImg.src = imgSpeakySmile;
                 stopAllSounds();
@@ -182,7 +208,6 @@
             updatePumkinStyle(pPos.originX, pPos.originY);
             pumkinEl.style.cursor = 'grab';
         }
-
         if (isMouseDown && !isHappy) {
             stopAllSounds();
             soundUp.play();
@@ -190,24 +215,19 @@
         isMouseDown = false;
         isDraggingPumkin = false;
         lastInteractionTime = Date.now();
-    });
+    };
 
-    canvas.addEventListener('mousedown', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const mx = e.clientX - rect.left;
-        
-        if (mx <= currentSpeakyImg.width) {
-            if (isHappy) {
-                isHappy = false;
-                currentSpeakyImg.src = imgSpeakyCrying;
-            }
-            isMouseDown = true;
-            stopShake(); // 클릭 시에도 흔들림 중단
-            stopAllSounds();
-            soundDown.play();
-        }
-        lastInteractionTime = Date.now();
-    });
+    // 마우스 이벤트
+    pumkinEl.addEventListener('mousedown', onDown);
+    canvas.addEventListener('mousedown', onDown);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+
+    // 터치 이벤트 (모바일 대응)
+    pumkinEl.addEventListener('touchstart', (e) => { e.preventDefault(); onDown(e); }, {passive: false});
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); onDown(e); }, {passive: false});
+    window.addEventListener('touchmove', (e) => { onMove(e); }, {passive: false});
+    window.addEventListener('touchend', onUp);
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -221,7 +241,6 @@
                 currentSpeakyImg.src = imgSpeakyCrying;
             }
             canvas.classList.add('shake-canvas');
-            // 타이머 참조 저장
             shakeTimer = setTimeout(() => { 
                 canvas.classList.remove('shake-canvas'); 
                 shakeTimer = null;
@@ -247,7 +266,6 @@
                     p.vx += (dx / dist) * force * 5;
                 }
             }
-
             const ax = (orig.x - p.x) * spring;
             const ay = (orig.y - p.y) * spring;
             p.vx = (p.vx + ax) * friction;
@@ -255,7 +273,6 @@
             p.x += p.vx;
             p.y += p.vy;
         }
-
         render();
         requestAnimationFrame(animate);
     }
