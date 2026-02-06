@@ -45,6 +45,22 @@
             font-size: 14px; 
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
+
+        /* --- 방문자 카운터 스타일 추가 --- */
+        .visitor-counter {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        .visitor-counter:hover {
+            opacity: 1;
+        }
+        /* -------------------------- */
+
         @keyframes shake {
             0% { transform: translate(1px, 1px) rotate(0deg); }
             10% { transform: translate(-1px, -2px) rotate(-1deg); }
@@ -75,6 +91,12 @@
     </div>
     <div class="info">흐에엥! 스피키 네르지 마세요!</div>
 
+    <div class="visitor-counter">
+        <a href="https://hits.sh/haminsong.github.io/Trickcal/Speaky_Touch/">
+            <img src="https://hits.sh/haminsong.github.io/Trickcal/Speaky_Touch.svg?label=VISITORS&color=666666&style=flat-square&view=today-total" alt="Hits">
+        </a>
+    </div>
+
 <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -94,7 +116,6 @@
     const soundIdle = new Audio('Sounds/Speaky3.mp3');
     const soundHappy = new Audio('Sounds/SpeakyHappy.m4a');
 
-    // 현재 활성화된 이미지를 가리키는 변수 (포인터 역할)
     let currentSpeakyImg = imgCache.crying; 
     let isHappy = false;
     let isLoaded = 0;
@@ -128,11 +149,9 @@
         };
     }
 
-    // 모든 리소스가 로드되었는지 확인 후 초기화
     function checkAllLoaded() {
         isLoaded++;
-        if (isLoaded === 2) { // crying, smile 두 장 로드 완료 시
-            const maxWidth = Math.min(window.innerWidth * 0.9, imgCache.crying.width + 200);
+        if (isLoaded === 2) {
             canvas.width = imgCache.crying.width + 200;
             canvas.height = imgCache.crying.height;
 
@@ -201,7 +220,7 @@
         } else if (pos.x <= imgCache.crying.width) {
             if (isHappy) {
                 isHappy = false;
-                currentSpeakyImg = imgCache.crying; // 이미지 객체 교체
+                currentSpeakyImg = imgCache.crying;
             }
             isMouseDown = true;
             stopShake();
@@ -224,7 +243,7 @@
             if (pPos.x < imgCache.crying.width) {
                 stopShake(); 
                 isHappy = true;
-                currentSpeakyImg = imgCache.smile; // 이미지 객체 교체
+                currentSpeakyImg = imgCache.smile;
                 stopAllSounds();
                 soundHappy.play();
             }
@@ -259,7 +278,7 @@
             soundIdle.play();
             if (isHappy) {
                 isHappy = false;
-                currentSpeakyImg = imgCache.crying; // 원복
+                currentSpeakyImg = imgCache.crying;
             }
             canvas.classList.add('shake-canvas');
             shakeTimer = setTimeout(() => { 
@@ -340,7 +359,6 @@
         const f = (o1.x * (o2.y * p3.y - p2.y * o3.y) - o1.y * (o2.x * p3.y - p2.y * o3.x) + p1.y * (o2.x * o3.y - o2.y * o3.x)) / dnm;
         
         ctx.setTransform(a, d, b, e, c, f);
-        // 캐싱된 이미지를 직접 그림
         ctx.drawImage(currentSpeakyImg, 0, 0);
         ctx.restore();
     }
