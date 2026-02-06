@@ -46,23 +46,37 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
 
-        /* --- 방문자 카운터 텍스트 스타일 --- */
+        /* --- 방문자 카운터 텍스트 스타일 수정 --- */
         .counter-wrapper {
             position: fixed;
             bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 1000;
-            color: #ffffff;
-            font-family: 'Courier New', Courier, monospace; /* 숫자 가독성 */
-            font-size: 14px;
-            text-align: center;
             background: rgba(255, 255, 255, 0.1);
-            padding: 5px 15px;
+            padding: 8px 15px;
             border-radius: 10px;
-            pointer-events: none; /* 게임 클릭 방해 금지 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
         }
-        .counter-item { margin: 2px 0; }
+        .counter-item { 
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            height: 22px; /* 뱃지 높이에 맞춤 */
+        }
+        .counter-text {
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .badge-img {
+            height: 18px; /* 숫자 부분만 깔끔하게 보이도록 크기 조절 */
+            filter: brightness(1.2); /* 숫자를 좀 더 선명하게 */
+        }
         /* -------------------------- */
 
         @keyframes shake {
@@ -96,40 +110,18 @@
     <div class="info">흐에엥! 스피키 네르지 마세요!</div>
 
     <div class="counter-wrapper">
-        <div class="counter-item">Total : <span id="total-count">...</span></div>
-        <div class="counter-item">Today : <span id="today-count">...</span></div>
+        <div class="counter-item">
+            <span class="counter-text">Today :</span>
+            <img class="badge-img" src="https://hits.sh/haminsong.github.io/Trickcal/Speaky_Touch.svg?label=&color=121212&style=flat-square&view=today" alt="Today">
+        </div>
+        <div class="counter-item">
+            <span class="counter-text">Total :</span>
+            <img class="badge-img" src="https://hits.sh/haminsong.github.io/Trickcal/Speaky_Touch.svg?label=&color=121212&style=flat-square" alt="Total">
+        </div>
     </div>
 
 <script>
-    /* --- 방문자 수 로드 스크립트 --- */
-    async function updateCounter() {
-        const url = "https://haminsong.github.io/Trickcal/Speaky_Touch";
-        try {
-            // HITS API의 데이터를 JSON으로 받아오기 (JSONP 대안 방식)
-            const response = await fetch(`https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${encodeURIComponent(url)}`);
-            // 참고: 실제 정밀한 텍스트 카운팅을 위해 외부 API의 badge를 파싱하거나 hits.sh를 활용합니다.
-            // 여기서는 UI 구현을 위해 hits.sh에서 제공하는 정보를 매핑하는 방식을 제안합니다.
-            
-            // 단순 텍스트 표시를 위해 hits.sh의 카운팅 이미지를 대신 활용해 숫자를 가져오는 것은 제약이 있으므로, 
-            // 직접적인 텍스트 노출을 위해 아래 이미지 주소에서 데이터를 호출하는 구조를 시뮬레이션합니다.
-            document.getElementById('total-count').innerText = "Loading.."; 
-            document.getElementById('today-count').innerText = "Loading..";
-
-            // 실제 운영 시에는 이미지 배지를 숨겨진 채로 로드하여 서버에 카운트를 올리고, 
-            // 여기서는 UI만 유지하거나 카운트 전용 API(CountAPI 등)를 연결하는 것이 좋습니다.
-            // 임시로 오늘/전체 숫자를 시각적으로 대체하는 배지 링크를 연동해둡니다.
-            const totalRes = await fetch(`https://api.countapi.xyz/hit/haminsong-trickcal/total`).catch(() => ({json: () => ({value: 'Connect'})}));
-            const totalData = await totalRes.json();
-            document.getElementById('total-count').innerText = totalData.value || 'Check';
-            document.getElementById('today-count').innerText = 'Online'; // Today 전용 API는 제약이 많아 상태로 표시
-        } catch (e) {
-            document.getElementById('total-count').innerText = "Active";
-            document.getElementById('today-count').innerText = "Live";
-        }
-    }
-    updateCounter();
-    /* -------------------------- */
-
+    // 기존의 모든 자바스크립트 로직 (이미지 로드, 물리 효과, 사운드 등) 그대로 유지
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     const pumkinEl = document.getElementById('pumkin-img');
@@ -216,9 +208,9 @@
         if (shakeTimer) { clearTimeout(shakeTimer); shakeTimer = null; }
     }
 
-    const onDown = (e) => {
-        const pos = getEventPos(e);
-        if (e.target === pumkinEl) { isDraggingPumkin = true; pumkinEl.style.cursor = 'grabbing'; }
+    const onDown = (onE) => {
+        const pos = getEventPos(onE);
+        if (onE.target === pumkinEl) { isDraggingPumkin = true; pumkinEl.style.cursor = 'grabbing'; }
         else if (pos.x <= imgCache.crying.width) {
             if (isHappy) { isHappy = false; currentSpeakyImg = imgCache.crying; }
             isMouseDown = true; stopShake(); stopAllSounds(); soundDown.play();
@@ -226,8 +218,8 @@
         lastInteractionTime = Date.now();
     };
 
-    const onMove = (e) => {
-        const pos = getEventPos(e);
+    const onMove = (moveE) => {
+        const pos = getEventPos(moveE);
         if (isDraggingPumkin) { updatePumkinStyle(pos.x - 40, pos.y - 40); }
         targetX = pos.x;
     };
